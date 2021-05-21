@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  vesteda:
+    build: vesteda/
+    environment:
+      - MESSAGEBIRD_CLIENT=ABC
+      - MESSAGEBIRD_DESTINATION=DEF
+      - MESSAGEBIRD_ORIGINATOR=MessageBird
+  redis:
+    image: "redis:alpine"

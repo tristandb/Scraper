@@ -4,8 +4,8 @@ services:
   vesteda:
     build: vesteda/
     environment:
-      - MESSAGEBIRD_CLIENT=ABC
-      - MESSAGEBIRD_DESTINATION=DEF
-      - MESSAGEBIRD_ORIGINATOR=MessageBird
+      - MESSAGEBIRD_CLIENT="${MESSAGEBIRD_CLIENT}"
+      - MESSAGEBIRD_DESTINATION="${MESSAGEBIRD_DESTINATION}"
+      - MESSAGEBIRD_ORIGINATOR="${MESSAGEBIRD_ORIGINATOR}"
   redis:
     image: "redis:alpine"

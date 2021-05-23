@@ -14,7 +14,7 @@ cache = redis.Redis(host="redis", port=6379)
 
 
 def send_message(phone="+31655922753", message="test_message"):
-    print(message)
+    logger.info(f"Sending {message}")
     client = messagebird.Client(os.getenv("MESSAGEBIRD_CLIENT"))
     try:
         msg = client.message_create(os.getenv("MESSAGEBIRD_ORIGINATOR"), phone, message)
@@ -30,6 +30,7 @@ def get_api(url):
 
 
 def process_api_result(json):
+    logger.info(f"Processing API result")
     for index in range(len(json["maps"])):
         woningen = json["maps"][index]
         for woning_id in woningen["aWoningen"]:
@@ -49,12 +50,6 @@ def process_api_result(json):
                 messsage = f"""Update voor Vesteda woning {woning["Straatnaam"]} {woning["Huisnummer"]}, veranderd naar status {woning["Woning_Status"]}, prijs € {woning["Woning_Prijs"]}."""
                 send_message(os.getenv("MESSAGEBIRD_DESTINATION"), messsage)
             cache.set(woning_id, woning["Woning_Status"])
-
-        # for woning in
-        # for woning in item["aWoningen"]:
-        #    print(woning["Woning_Id"])
-        #    print(type(woning["Woning_Id"]))
-        #    # print(cache.get(str(woning["Woning_Id"])))
 
 
 def main():

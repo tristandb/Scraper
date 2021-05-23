@@ -1,2 +1,2 @@
 # run python script 
-1 * * * * root python /app/vesteda/main.py
+1 * * * * /usr/local/bin/python /app/vesteda/main.py

@@ -1,2 +1,2 @@
 # run python script 
-1 * * * * /usr/local/bin/python /app/vesteda/main.py
+1 * * * * /usr/local/bin/python /app/vesteda/main.py > /proc/1/fd/1 2>/proc/1/fd/2

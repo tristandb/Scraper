@@ -10,14 +10,18 @@ logger.add(
     sys.stderr, format="{time} {level} {message}", filter="vesteda", level="INFO"
 )
 
-cache = redis.Redis(host="redis", port=6379)
+cache = redis.Redis(host="redis", port=6379, decode_responses=True)
 
 
-def send_message(phone="+31655922753", message="test_message"):
-    logger.info(f"Sending {message}")
-    client = messagebird.Client(os.getenv("MESSAGEBIRD_CLIENT"))
+def send_message(message="test_message"):
+    logger.info(f"Sending message: {message}")
+    client = messagebird.Client(str(os.environ.get("MESSAGEBIRD_CLIENT")))
     try:
-        msg = client.message_create(os.getenv("MESSAGEBIRD_ORIGINATOR"), phone, message)
+        msg = client.message_create(
+            str(os.environ.get("MESSAGEBIRD_ORIGINATOR")),
+            str(os.environ.get("MESSAGEBIRD_DESTINATION")),
+            message,
+        )
 
     except messagebird.client.ErrorException as e:
         for error in e.errors:
@@ -43,12 +47,11 @@ def process_api_result(json):
                 cache.set(woning_id, current_status)
 
             # Chack if has changed, send message
-            if (
-                current_status is not woning["Woning_Status"]
-                and woning["Woning_Status"] != "Verhuurd"
-            ):
-                messsage = f"""Update voor Vesteda woning {woning["Straatnaam"]} {woning["Huisnummer"]}, veranderd naar status {woning["Woning_Status"]}, prijs € {woning["Woning_Prijs"]}."""
-                send_message(os.getenv("MESSAGEBIRD_DESTINATION"), messsage)
+            if current_status != woning["Woning_Status"] and woning[
+                "Woning_Status"
+            ] not in ["Verhuurd"]:
+                message = f"""Update voor Vesteda woning {woning["Straatnaam"]} {woning["Huisnummer"]}, veranderd naar status {woning["Woning_Status"]}, prijs € {woning["Woning_Prijs"]}."""
+                send_message(message)
             cache.set(woning_id, woning["Woning_Status"])
 
 
